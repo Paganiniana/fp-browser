@@ -28,9 +28,10 @@ export async function fakeFetch(options:FakeRequest):Promise<FakeResponse> {
     let pu = parseUrl(options.url);
 
     // 2. turn that into an HTTP request
-    let req = makeHttpRequest(options.method, pu);
+    let req;
+    if (options.headers) req = makeHttpRequest(options.method, pu);
+    else req = makeHttpRequest(options.method, pu, options.headers);
 
-    console.log("Do the request.");
     // 3. make the request
     let buff = await getDataBySocket({
         host: pu.host,

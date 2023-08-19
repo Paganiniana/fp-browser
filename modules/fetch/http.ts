@@ -2,20 +2,36 @@ import { ParsedUrl, HttpMethod, ParsedResponse, Status, HeaderGroup, } from "./t
 
 const CLIENT_HTTP_VERSION = "HTTP/1.0";
 
+const defaultHeaders:HeaderGroup = {
+    "Connection": "close",
+    "User-Agent": "fp-browser",
+}
+
 /**
  * Takes a ParsedUrl and returns a 
  * UTF-8 encoded HTTP request, ready for the socket
- */
-export function makeHttpRequest(method:HttpMethod = "GET", pu: ParsedUrl): Uint8Array {
+*/
+export function makeHttpRequest(method:HttpMethod = "GET", pu: ParsedUrl, headers:HeaderGroup={}): Uint8Array {
     let newLine ="\r\n" 
-    // 0. starts as a string
+    // 0. topline
     let req = "";
     // HTTP requires return characters
     req += `${method} ${pu.resource} ${CLIENT_HTTP_VERSION}\r\n`; 
-    // the first new line ends the Host header, the second creates a request-terminating line
-    req += `Host: ${pu.host}${newLine}${newLine}\r\n\r\n` 
+    
+    // 1. headers
+    req += `Host: ${pu.host}${newLine}${newLine}\r\n` 
+    for (let header in headers) {
+        req += `${header}: ${headers[header]}\r\n`
+    }
+    for (let header in defaultHeaders) {
+        if (Object.keys(headers).includes(header)) 
+            continue; // use provided value
+        req += `${header}: ${defaultHeaders[header]}\r\n`
+    }
 
-    // 1. encode it!
+    req += "\r\n"; // the final new line finishes the headers
+
+    // 2. encode it!
     const encoder = new TextEncoder();
     let encodedReq = encoder.encode(req);
     return encodedReq;
