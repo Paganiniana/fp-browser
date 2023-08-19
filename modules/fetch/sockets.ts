@@ -13,16 +13,13 @@ export type SocketCommOptions = {
  */
 export function getDataBySocket(options: SocketCommOptions): Promise<Buffer> {
     // 1. create appropriate socket
-    console.log("Creating socket")
     const client:Socket = options.tls ? new TLSSocket(new Socket()) : new Socket();
 
     // 2. setup promise with appropriate events
     const p:Promise<Buffer> = new Promise((resolve, reject) => {
-        console.log("Setting up promise...", options)
         let success = false;
         // a. start the connection
         client.on("connect", () => {
-            console.log("Getting started...")
             client.write(options.value)
         })
 

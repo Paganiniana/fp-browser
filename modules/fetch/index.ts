@@ -24,11 +24,9 @@ export type FakeResponse = {
  * @returns the plain string body of the request
  */
 export async function fakeFetch(options:FakeRequest):Promise<FakeResponse> {
-    console.log("Fake Fetch.");
     // 1. get the parts of the URL
     let pu = parseUrl(options.url);
 
-    console.log("Turn it into an http request.");
     // 2. turn that into an HTTP request
     let req = makeHttpRequest(options.method, pu);
 
@@ -41,7 +39,6 @@ export async function fakeFetch(options:FakeRequest):Promise<FakeResponse> {
         value: req,
     })
 
-    console.log("Parse it.");
     // 4. get the parts of the serialized response
     const res = parseHttpResponse(buff);
 
