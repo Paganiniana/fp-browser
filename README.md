@@ -1,4 +1,4 @@
-# Browser
+# FP Browser
 
 This is a project to recreate the browser from the [browser.engineer](http://browser.engineering/) project, by Pavel Panchekha & Chris Harrelson (2023). It uses Typescript instead of loosey-goosey Python, as a warm up for larger browser projects. 
 
