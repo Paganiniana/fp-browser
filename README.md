@@ -9,7 +9,7 @@ The plot of our browser is broken down into three acts:
 #### I. Turning a URL into an HTTP request
 #### II. Making that HTTP **request**, by whatever means necessary
 #### III. Making heads/tails of the HTTP **response**
-#### IV. Displaying said [Response](###responses)
+#### IV. Displaying said [Response](#responses)
 
 ### Responses
 
