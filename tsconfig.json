@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "strict": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "baseUrl": ".",
+        "allowJs": true,
+        "paths": {
+            "@/*": ["./modules/*"],
+        }
+    },
+    "include": [
+        "./browser/**/*.ts",
+        "./modules/**/*.ts",
+    ]
+}

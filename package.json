@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "start:browser": "vite --config browser/vite-config.ts"
   },
   "dependencies": {
     "ts-node": "^10.9.1",
@@ -16,5 +17,8 @@
   },
   "lib": [
     "es2015"
-  ]
+  ],
+  "devDependencies": {
+    "vite": "^4.4.9"
+  }
 }

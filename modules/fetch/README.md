@@ -1,0 +1,3 @@
+# Fetching
+
+Most "real" browsers rely on [Berkley Sockets](https://en.wikipedia.org/wiki/Berkeley_sockets) or similar services for performing HTTP requests. When doing this in a browser (where this project runs), we have a problem, because we don't have access to proper sockets. (Only Web Sockets, and they only work with resources from the same domain). We can't even use native [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) because it relies on access control headers to enable cross-origin HTTP requests (even simple GETs). We can fix this by setting up a proxy, but that gets complicated...
