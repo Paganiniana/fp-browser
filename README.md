@@ -32,7 +32,7 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [x] Connecting to a server
 - [x] Requesting Information
 - [x] Request and Response
-- [ ] Display the HTML
+- [x] Display the HTML
 - [x] Encrypted connections
 
 ***Exercises:***
@@ -47,7 +47,21 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [ ] Redirects
 - [ ] Caches
 
+### Chapter 2
+
 
 # References
+- [x] Drawing to the Window
+- [x] Laying out the text
+- [x] Scrolling text
+- [x] Reacting to the user
+- [x] Faster Rendering
+
+***Exercises:***
+- [ ] Line Breaks
+- [ ] Mouse Wheel
+- [ ] Emoji
+- [ ] Resizing
+- [ ] Zoom
 
 Pavel, P., & Harrelson, C. (2023). *Web Browser Engineering* Browser.Engineering https://browser.engineering/index.html 
