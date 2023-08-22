@@ -59,14 +59,10 @@ export type FakeResponse = {
  */
 export async function fakeFetch(options:FakeRequest):Promise<FakeResponse> {
 
-    const defaultHeaders = {
-        'Access-Control-Allow-Origin': "*"
-    }
 
     let res = await fetch(options.url, {
         method: options.method,
-        mode: 'no-cors',
-        headers: {...defaultHeaders, ... options.headers},
+        headers: options.headers,
     });
     
     let body = await res.text();

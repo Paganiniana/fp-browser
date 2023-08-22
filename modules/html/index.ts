@@ -1,3 +1,5 @@
+import { lex } from "./lex";
+
 export function parseHtml(html:string) {
-    // TODO
+    return lex(html);
 }
