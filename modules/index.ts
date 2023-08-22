@@ -88,6 +88,10 @@ export class Browser {
             let x = display[0];
             let y = display[1];
             let c = display[2];
+            // 1. skip anything that's off-screen
+            if (y > this.scroll + this.height) continue;
+            if (y < this.scroll) continue;
+            // 2. draw!
             this.ctx.fillText(c, x, y - this.scroll);
         }
     }
