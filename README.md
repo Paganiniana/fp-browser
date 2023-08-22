@@ -48,9 +48,6 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [ ] Caches
 
 ### Chapter 2
-
-
-# References
 - [x] Drawing to the Window
 - [x] Laying out the text
 - [x] Scrolling text
@@ -63,5 +60,7 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [ ] Emoji
 - [ ] Resizing
 - [ ] Zoom
+
+# References
 
 Pavel, P., & Harrelson, C. (2023). *Web Browser Engineering* Browser.Engineering https://browser.engineering/index.html 
