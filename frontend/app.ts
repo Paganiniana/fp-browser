@@ -1,5 +1,5 @@
 import { Browser } from "@/index";
-let url = "http://browser.engineering/index.html";
+let url = "http://localhost:5173/chapter_1/wbe.html";
 
 
 const browserWrapper = document.getElementById("browser-target") as HTMLDivElement;

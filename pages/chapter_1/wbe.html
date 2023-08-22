@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <link rel="prefetch" href="https://fonts.gstatic.com/s/lora/v32/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkq0.woff2" as="font" type="font/woff2">
+  <link rel="prefetch" href="https://fonts.gstatic.com/s/vollkorn/v22/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df2MHGeHmmc.woff2" as="font" type="font/woff2">
+  <link rel="prefetch" href="https://fonts.gstatic.com/s/vollkorn/v22/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DJGWlmeObQ.woff2" as="font" type="font/woff2">
+  <link rel="prefetch" href="https://fonts.gstatic.com/s/lora/v32/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-MoFoq92nA.woff2" as="font" type="font/woff2">
+  <link rel="prefetch" href="https://fonts.gstatic.com/s/spectral/v5/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2" as="font" type="font/woff2">
+  <meta name="color-scheme" content="dark light">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes">
+  <meta name="author" content="Pavel Panchekha &amp; Chris Harrelson">
+
+
+
+  <link rel="stylesheet" href="wbe_files/book.css">
+  <link rel="stylesheet" href="wbe_files/css.css">
+  <link rel="stylesheet" href="wbe_files/css_002.css">
+  <link rel="alternate" type="application/rss+xml" href="https://browser.engineering/rss.xml" title="Web Browser Engineering">
+
+  <title>Web Browser Engineering</title>
+
+</head>
+
+<body class="main" data-new-gr-c-s-check-loaded="8.906.0" data-gr-ext-installed="">
+
+
+<header>
+<h1 class="title">Web Browser Engineering</h1>
+<p class="author">Pavel Panchekha &amp; Chris Harrelson</p>
+<a href="https://twitter.com/browserbook">Twitter</a> ·
+<a href="https://browserbook.substack.com/">Blog</a> ·
+<a href="https://patreon.com/browserengineering">Patreon</a> ·
+<a href="https://github.com/browserengineering/book/discussions">Discussions</a>
+</header>
+
+
+<nav id="toc">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#part-1-drawing-graphics" id="toc-part-1-drawing-graphics">Part 1: Drawing Graphics</a></li>
+<li><a href="#part-2-viewing-documents" id="toc-part-2-viewing-documents">Part 2: Viewing Documents</a></li>
+<li><a href="#part-3-running-applications" id="toc-part-3-running-applications">Part 3: Running
+Applications</a></li>
+<li><a href="#part-4-modern-browsers" id="toc-part-4-modern-browsers">Part 4: Modern Browsers</a></li>
+</ul>
+</nav>
+
+<p>Web browsers are ubiquitous, but how do they work? This book
+explains, building a basic but complete web browser, from networking to
+JavaScript, in a couple thousand lines of Python.</p>
+
+<div id="signup">
+<iframe src="wbe_files/embed.html" width="350" height="180" frameborder="0" scrolling="no"></iframe>
+<a href="#" id="signup-close">Close</a>
+</div>
+
+<p>Follow this book’s <a href="https://browserbook.substack.com/archive">blog</a> or <a href="https://twitter.com/browserbook">Twitter</a> for updates. You can
+also talk about the book with others in our <a href="https://github.com/browserengineering/book/discussions">discussion
+forum</a>.</p>
+<p>If you are enjoying the book, consider supporting us on <a href="https://patreon.com/browserengineering">Patreon</a>.</p>
+<p>Or just <a href="mailto:author@browser.engineering">send us an
+email</a>!</p>
+<section id="introduction" class="intro">
+<h1>Introduction</h1>
+<ol type="1">
+<li><a href="https://browser.engineering/preface.html">Preface</a></li>
+<li><a href="https://browser.engineering/intro.html">Browsers and the Web</a></li>
+<li><a href="https://browser.engineering/history.html">History of the Web</a></li>
+</ol>
+</section>
+<h1 id="part-1-drawing-graphics">Part 1: Drawing Graphics</h1>
+<ol type="1">
+<li><a href="https://browser.engineering/http.html">Downloading Web Pages</a><br>
+URLs and HTTP requests</li>
+<li><a href="https://browser.engineering/graphics.html">Drawing to the Screen</a><br>
+Creating windows and drawing to a canvas</li>
+<li><a href="https://browser.engineering/text.html">Formatting Text</a><br>
+Word wrapping and line spacing</li>
+</ol>
+<h1 id="part-2-viewing-documents">Part 2: Viewing Documents</h1>
+<ol start="4" type="1">
+<li><a href="https://browser.engineering/html.html">Constructing a Document Tree</a><br>
+Parsing and fixing HTML</li>
+<li><a href="https://browser.engineering/layout.html">Laying Out Pages</a><br>
+Inline and block layout, plus the box model</li>
+<li><a href="https://browser.engineering/styles.html">Applying Author Styles</a><br>
+Parsing and applying CSS</li>
+<li><a href="https://browser.engineering/chrome.html">Handling Buttons and Links</a><br>
+Hyperlinks and browser chrome</li>
+</ol>
+<h1 id="part-3-running-applications">Part 3: Running Applications</h1>
+<ol start="8" type="1">
+<li><a href="https://browser.engineering/forms.html">Sending Information to Servers</a><br>
+Form submission and web servers</li>
+<li><a href="https://browser.engineering/scripts.html">Running Interactive Scripts</a><br>
+Changing the DOM and reacting to events</li>
+<li><a href="https://browser.engineering/security.html">Keeping Data Private</a><br>
+Cookies and logins, XSS and CSRF</li>
+</ol>
+<h1 id="part-4-modern-browsers">Part 4: Modern Browsers</h1>
+<ol start="11" type="1">
+<li><a href="https://browser.engineering/visual-effects.html">Adding Visual Effects</a><br>
+Blending, clipping, and compositing</li>
+<li><a href="https://browser.engineering/scheduling.html">Scheduling Tasks and Threads</a><br>
+The event loop and the rendering pipeline</li>
+<li><a href="https://browser.engineering/animations.html">Animating and Compositing</a><br>
+Smooth animations using the GPU</li>
+<li><a href="https://browser.engineering/accessibility.html">Making Content Accessible</a><br>
+Keyboard input, zooming, and the accessibility tree</li>
+<li><a href="https://browser.engineering/embeds.html">Supporting Embedded Content</a><br>
+Images, iframes, and scripting</li>
+<li><a href="https://browser.engineering/invalidation.html">Reusing Previous Computation</a><br>
+Invalidation, editing, and correctness</li>
+</ol>
+<div class="outro">
+<h1 id="conclusion">Conclusion</h1>
+<ol type="1">
+<li><a href="https://browser.engineering/skipped.html">What Wasn’t Covered</a></li>
+<li><a href="https://browser.engineering/change.html">A Changing Landscape</a></li>
+</ol>
+<h1 id="appendix">Appendix</h1>
+<ol start="3" type="1">
+<li><a href="https://browser.engineering/glossary.html">Glossary</a></li>
+<li><a href="https://browser.engineering/bibliography.html">Bibliography</a></li>
+<li><a href="https://browser.engineering/about.html">About the Authors</a></li>
+<li><a href="https://browser.engineering/thanks">Contributors</a></li>
+<li><a href="https://browser.engineering/classes.html">List of courses taught from this
+book</a></li>
+<li><a href="https://browser.engineering/onepage.html">One-page version</a></li>
+</ol>
+</div>
+
+
+
+
+
+<footer>
+  © 2018–2023 <a href="https://pavpanchekha.com/">Pavel Panchekha</a> &amp; <a href="https://twitter.com/chrishtr">Chris Harrelson</a>
+</footer>
+
+<script type="text/javascript" src="wbe_files/feedback.js"></script>
+<script type="text/javascript" src="wbe_files/book.js"></script>
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>

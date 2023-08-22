@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "ts-node index.ts",
-    "start:browser": "vite --config browser/vite-config.ts"
+    "start:browser": "vite --config frontend/vite-config.ts"
   },
   "dependencies": {
     "ts-node": "^10.9.1",

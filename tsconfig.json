@@ -17,7 +17,7 @@
         }
     },
     "include": [
-        "./browser/**/*.ts",
+        "frontend/**/*.ts",
         "./modules/**/*.ts",
     ]
 }
