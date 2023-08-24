@@ -61,6 +61,22 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [ ] Resizing
 - [ ] Zoom
 
+### Chapter 3
+- [x] What is a font?
+- [x] Measuring Text
+- [x] Measure by word  
+- [x] Styling Text
+- [ ] A layout object 
+- [ ] Text of different sizes
+- [ ] Faster text layout
+
+***Exercises***
+- [ ] Centered Text
+- [ ] Superscripts
+- [ ] Soft Hyphens
+- [ ] Small caps
+- [ ] Preformatted text 
+
 # References
 
 Pavel, P., & Harrelson, C. (2023). *Web Browser Engineering* Browser.Engineering https://browser.engineering/index.html 

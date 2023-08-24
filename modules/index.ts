@@ -1,18 +1,24 @@
 import { fakeFetch } from "./fetch";
-import { lex } from "./html/lex";
+import { TextMetrics } from "./fonts";
+import { lex, LexResult } from "./html/lex";
+import { Text, Tag } from "./html/elements";
 
-type DisplayType = [number, number, string][];
+type DisplayType = [number, number, string, TextMetrics][];
 
 export class Browser {
     target:HTMLElement;
     ctx: CanvasRenderingContext2D;
-    
     
     width: number;
     height: number;
     display_list: DisplayType = []
 
     scroll:number = 0;
+
+    // default styles
+    defaultFontSize=16;
+    defaultFontFam="Times";
+    defaultFontWeight="";
 
     constructor(target:HTMLElement) {
         console.log("Initiating the browser...")
@@ -38,6 +44,19 @@ export class Browser {
         this.registerEventListeners();
     }
 
+    getFont(weight:string=this.defaultFontWeight) {
+        let font = new TextMetrics({
+            family: this.defaultFontFam,
+            size: this.defaultFontSize,
+            weight: weight,
+        })
+        return font;
+    }
+
+    setDrawFont(f: TextMetrics) {
+        this.ctx.font = f.ctx.font;
+    }
+
     registerEventListeners() {
         window.addEventListener("keydown", this.keydownHandler.bind(this));
     }
@@ -58,20 +77,48 @@ export class Browser {
         e.stopPropagation();
     }
 
-    layout(text:string) {
+    layout(tokens:LexResult) {
+        let TM = this.getFont();
+        let metrics = TM.metrics();
+
         let HSTEP = 13;
-        let VSTEP = 18;
+        let VSTEP = metrics.linespace * 1.25;
         let cursor_x = HSTEP;
         let cursor_y = VSTEP;
         let display_list: DisplayType = [];
 
-        for (let char of text) {
-            display_list.push([cursor_x, cursor_y, char]);
-            cursor_x += HSTEP;
-            // wrap
-            if (cursor_x > this.width) {
-                cursor_x = 0;
-                cursor_y += HSTEP;
+
+        console.log("Laying out...", tokens);
+
+        for (let t of tokens) {
+            if (t instanceof Tag) {
+                // configure the styles..
+                let tagName = t.tag;
+                let weight = "";
+                if (tagName == "i")
+                    weight="italic";
+                if (tagName == "b")
+                    weight="bold";
+                TM = this.getFont(weight);
+                console.log("Setting weight", weight)
+
+                continue;
+            }
+            
+            // 2. draw text nodes
+            let text = t.text!.trim();
+            let words = text.split(" ");
+
+            for (let word of words) {
+                let w = TM.measure(word);
+                // wrap
+                if (cursor_x + w > this.width) {
+                    cursor_x = HSTEP;
+                    cursor_y += VSTEP;
+                }
+    
+                display_list.push([cursor_x, cursor_y, word, TM]);
+                cursor_x += w + TM.measure(" ");
             }
         }
         this.display_list = display_list;
@@ -91,7 +138,11 @@ export class Browser {
             // 1. skip anything that's off-screen
             if (y > this.scroll + this.height) continue;
             if (y < this.scroll) continue;
-            // 2. draw!
+            
+            // 2. account for font styles
+            this.setDrawFont(display[3]);
+
+            // 3. draw!
             this.ctx.fillText(c, x, y - this.scroll);
         }
     }
@@ -102,8 +153,8 @@ export class Browser {
             method: "GET",
         })
 
-        let text = lex(res.body);
-        this.layout(text);
+        let tokens = lex(res.body);
+        this.layout(tokens);
         this.draw();
 
 

@@ -1,11 +1,12 @@
 import { Browser } from "@/index";
-let url = "http://localhost:5173/chapter_2/journey_to_the_west.html";
+let fontTest = `${location.href}/misc/font_test.html`;
+let url = `${location.href}/chapter_1/wbe.html`;
 
 
 const browserWrapper = document.getElementById("browser-target") as HTMLDivElement;
 
 function main() {
     let B = new Browser(browserWrapper);
-    B.load(url);
+    B.load(fontTest);
 }
 main();
