@@ -7,6 +7,6 @@ const browserWrapper = document.getElementById("browser-target") as HTMLDivEleme
 
 function main() {
     let B = new Browser(browserWrapper);
-    B.load(fontTest);
+    B.load(url);
 }
 main();

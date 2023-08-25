@@ -66,9 +66,9 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [x] Measuring Text
 - [x] Measure by word  
 - [x] Styling Text
-- [ ] A layout object 
-- [ ] Text of different sizes
-- [ ] Faster text layout
+- [x] A layout object 
+- [x] Text of different sizes
+- [x] Faster text layout
 
 ***Exercises***
 - [ ] Centered Text

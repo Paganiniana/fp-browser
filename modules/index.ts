@@ -2,8 +2,7 @@ import { fakeFetch } from "./fetch";
 import { TextMetrics } from "./fonts";
 import { lex, LexResult } from "./html/lex";
 import { Text, Tag } from "./html/elements";
-
-type DisplayType = [number, number, string, TextMetrics][];
+import { Layout } from "./html/layout";
 
 export class Browser {
     target:HTMLElement;
@@ -11,14 +10,10 @@ export class Browser {
     
     width: number;
     height: number;
-    display_list: DisplayType = []
+
+    lastLayout: Layout | undefined;
 
     scroll:number = 0;
-
-    // default styles
-    defaultFontSize=16;
-    defaultFontFam="Times";
-    defaultFontWeight="";
 
     constructor(target:HTMLElement) {
         console.log("Initiating the browser...")
@@ -42,15 +37,6 @@ export class Browser {
 
         // 3. set event listeners
         this.registerEventListeners();
-    }
-
-    getFont(weight:string=this.defaultFontWeight) {
-        let font = new TextMetrics({
-            family: this.defaultFontFam,
-            size: this.defaultFontSize,
-            weight: weight,
-        })
-        return font;
     }
 
     setDrawFont(f: TextMetrics) {
@@ -78,58 +64,19 @@ export class Browser {
     }
 
     layout(tokens:LexResult) {
-        let TM = this.getFont();
-        let metrics = TM.metrics();
-
-        let HSTEP = 13;
-        let VSTEP = metrics.linespace * 1.25;
-        let cursor_x = HSTEP;
-        let cursor_y = VSTEP;
-        let display_list: DisplayType = [];
-
-
-        console.log("Laying out...", tokens);
-
-        for (let t of tokens) {
-            if (t instanceof Tag) {
-                // configure the styles..
-                let tagName = t.tag;
-                let weight = "";
-                if (tagName == "i")
-                    weight="italic";
-                if (tagName == "b")
-                    weight="bold";
-                TM = this.getFont(weight);
-                console.log("Setting weight", weight)
-
-                continue;
-            }
-            
-            // 2. draw text nodes
-            let text = t.text!.trim();
-            let words = text.split(" ");
-
-            for (let word of words) {
-                let w = TM.measure(word);
-                // wrap
-                if (cursor_x + w > this.width) {
-                    cursor_x = HSTEP;
-                    cursor_y += VSTEP;
-                }
-    
-                display_list.push([cursor_x, cursor_y, word, TM]);
-                cursor_x += w + TM.measure(" ");
-            }
-        }
-        this.display_list = display_list;
+        this.lastLayout = new Layout(tokens, this.width, this.height);
     }
 
     draw() {
+        let L = this.lastLayout;
+        let display_list;
+        if (L) display_list = L.display_list;
+        else return;
+
         // empty
         this.ctx.clearRect(0, 0, this.width, this.height);
 
         // draw everything in our layout
-        let display_list = this.display_list;
         this.ctx.fillStyle = "black";
         for (let display of display_list) {
             let x = display[0];

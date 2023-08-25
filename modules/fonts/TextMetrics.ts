@@ -19,6 +19,7 @@ type Metrics = {
 export default class TextMetrics {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
+    fontSize:number=16; // default
 
     constructor(config:Config) {
         // 1. setup canvas
@@ -30,6 +31,7 @@ export default class TextMetrics {
     }
 
     setFont(family:string, size:number, weight: string) {
+        this.fontSize=size;
         this.canvas.width = size * 2;
         this.canvas.height = size * 2;
         this.ctx.font = `${weight} ${size}px ${family}`;
