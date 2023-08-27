@@ -1,7 +1,7 @@
 import { fakeFetch } from "./fetch";
 import { TextMetrics } from "./fonts";
 import { lex, LexResult } from "./html/lex";
-import { Text, Tag } from "./html/elements";
+import { parseHtml } from "./html";
 import { Layout } from "./html/layout";
 
 export class Browser {
@@ -63,8 +63,8 @@ export class Browser {
         e.stopPropagation();
     }
 
-    layout(tokens:LexResult) {
-        this.lastLayout = new Layout(tokens, this.width, this.height);
+    layout(tree:Node) {
+        this.lastLayout = new Layout(tree, this.width, this.height);
     }
 
     draw() {
@@ -100,10 +100,11 @@ export class Browser {
             method: "GET",
         })
 
-        let tokens = lex(res.body);
-        this.layout(tokens);
+        let parsedDom = parseHtml(res.body);
+        let B = parsedDom.parse();
+        console.log(B);
+
+        this.layout(B);
         this.draw();
-
-
     }
 }

@@ -77,6 +77,21 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [ ] Small caps
 - [ ] Preformatted text 
 
+### Chapter 4
+- [x] A tree of nodes
+- [x] Constructing the tree
+- [x] Debugging a parser
+- [x] Self-closing tags
+- [x] Using the node tree
+- [x] Handling author errors
+
+***Exercises:***  
+- [ ] Comments
+- [ ] Paragraphs
+- [ ] Scripts
+- [ ] Quoted Attributes
+- [ ] Syntax Highlighting
+
 # References
 
 Pavel, P., & Harrelson, C. (2023). *Web Browser Engineering* Browser.Engineering https://browser.engineering/index.html 

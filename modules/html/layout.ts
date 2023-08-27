@@ -1,7 +1,7 @@
-import { Tag, Text } from "./elements";
+import { Element, Node, Text } from "./elements";
 import { TextMetrics } from "@/fonts";
 
-type Token = Tag | Text;
+type Token = Element | Text;
 
 // x, word, fonts
 type LBDisplayType = [number, string, TextMetrics];
@@ -18,7 +18,7 @@ export class Layout {
     // where the layout lives
     display_list: DisplayType[] = [];
     line:LBDisplayType[] = []; // this is a temporary buffer, used during layout
-    tokens:Token[] = [];
+    tree:Node;
 
     // used in layout loop
     TM: TextMetrics;
@@ -33,7 +33,7 @@ export class Layout {
     style="Times";
     weight="";
 
-    constructor(tokens:Token[], w:number, h:number) {
+    constructor(tree:Node, w:number, h:number) {
         // set defaults
         this.TM = this.getFont();
         this.HSTEP = 13;
@@ -42,40 +42,71 @@ export class Layout {
         this.cursor_x = this.HSTEP;
         this.cursor_y = this.VSTEP;
 
-        this.tokens = tokens;
+        this.tree = tree;
         this.width = w;
         this.height = h;
 
-        this.init();
+        this.layout();
     }
 
-    evaluateTag(t: Tag) {
-        // configure the styles..
-        let tagName = t.tag;
+    openTag(el: Element) {
+        let tag = el.tag;
         let weight = "";
-        // <i>
-        if (tagName == "i")
-            weight="italic";
-        // <b>
-        if (tagName == "b")
-            weight="bold";
-        // <small>
-        if (tagName == "small")
-            this.size -= 3;
-        if (tagName == "/small")
-            this.size += 3;
-        // <big>
-        if (tagName == "big")
-            this.size += 4;
-        if (tagName == "/big")
-            this.size -= 4;
 
-        
+        // 1. <i>
+        if (tag == "i") {
+            weight = "italic";
+            debugger;
+        }
+
+        // 2. <b>
+        if (tag =="b") weight = "bold";
+
+        // 3. <small>
+        if (tag == "small") this.size -= 3;
+
+        // 4. <big>
+        if (tag == "big") this.size += 4;
+
+        // 5. <p>
+        if (tag == "p") {
+            this.flush() // new line for paragraphs
+            this.cursor_y += this.HSTEP;
+        }
+
         this.TM = this.getFont(weight);
     }
 
+    closeTag(el: Element) {
+        let tag = el.tag;
+        let weight = "";
+
+        // 1. <i>
+        if (tag == "i") weight = "";
+
+        // 2. <b>
+        if (tag =="b") weight = "";
+
+        // 3. <small>
+        if (tag == "small") this.size += 3;
+
+        // 4. <big>
+        if (tag == "big") this.size -= 4;
+
+        this.TM = this.getFont(weight);
+
+    }
+
     word(word:string) {
+        let w = this.TM.measure(word);
+        // wrap
+        if (this.cursor_x + w > this.width) {
+            this.flush();
+        }
+
         this.line.push([this.cursor_x, word, this.TM])
+
+        this.cursor_x += w + this.TM.measure(" ");
     }
 
     /**
@@ -94,6 +125,8 @@ export class Layout {
         }
         // 2. set the line height
         this.cursor_y += largestAscent * 1.25;
+        // 2.5. set the starting X
+        this.cursor_x = this.HSTEP;
 
         // 3. append the word
         for (let word of this.line) {
@@ -103,34 +136,32 @@ export class Layout {
         this.line=[];
     }
 
-    init() {
+    layout() {
         // clear the list
         this.display_list = [];
+        this.recurse(this.tree);
+        console.log("Finished layout", this.display_list)
+    }
 
-        for (let t of this.tokens) {
-            if (t instanceof Tag) {
-                this.evaluateTag(t);
-                continue;
-            }
-            
+    recurse(tree:Node) {
+
+        if (tree instanceof Text) {
+            let t = tree;
             // 2. draw text nodes
             let text = t.text!.trim();
             let words = text.split(" ");
 
             for (let word of words) {
-                let w = this.TM.measure(word);
-                // wrap
-                if (this.cursor_x + w > this.width) {
-                    this.flush();
-                    this.cursor_x = this.HSTEP;
-                }
-
                 this.word(word);
-                this.cursor_x += w + this.TM.measure(" ");
             }
+        } else {
+            let E = tree;
+            this.openTag(E as Element);
+            for (let ch of E.getChildren()) {
+                this.recurse(ch);
+            }
+            this.closeTag(E as Element);
         }
-
-        console.log("Finished layout", this.display_list)
     }
 
     getFont(weight:string=this.weight) {

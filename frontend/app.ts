@@ -1,6 +1,6 @@
 import { Browser } from "@/index";
-let fontTest = `${location.href}/misc/font_test.html`;
-let url = `${location.href}/chapter_1/wbe.html`;
+// let url = `${location.href}/chapter_1/wbe.html`;
+let url = `${location.href}/chapter_4/simple.html`;
 
 
 const browserWrapper = document.getElementById("browser-target") as HTMLDivElement;
