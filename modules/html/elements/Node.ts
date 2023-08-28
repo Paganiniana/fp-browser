@@ -11,6 +11,6 @@ export default class Node {
     }
 
     getChildren():Node[] {
-        return this.children;
+        return [... this.children];
     }
 }

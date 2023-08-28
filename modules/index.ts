@@ -1,8 +1,8 @@
 import { fakeFetch } from "./fetch";
 import { TextMetrics } from "./fonts";
-import { lex, LexResult } from "./html/lex";
+import { Node } from "./html/elements";
 import { parseHtml } from "./html";
-import { Layout } from "./html/layout";
+import { DocumentLayout } from "./html/layout";
 
 export class Browser {
     target:HTMLElement;
@@ -11,7 +11,7 @@ export class Browser {
     width: number;
     height: number;
 
-    lastLayout: Layout | undefined;
+    lastLayout: DocumentLayout | undefined;
 
     scroll:number = 0;
 
@@ -64,7 +64,9 @@ export class Browser {
     }
 
     layout(tree:Node) {
-        this.lastLayout = new Layout(tree, this.width, this.height);
+        this.lastLayout = new DocumentLayout(tree, this.width, this.height);
+        console.log("Layout", this.lastLayout);
+        this.lastLayout.layout();
     }
 
     draw() {
@@ -104,7 +106,7 @@ export class Browser {
         let B = parsedDom.parse();
         console.log(B);
 
-        this.layout(B);
+        this.layout(parsedDom.root);
         this.draw();
     }
 }
