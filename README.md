@@ -92,6 +92,22 @@ These are the features included/recommended as part of Pavel & Harrelson (2023).
 - [ ] Quoted Attributes
 - [ ] Syntax Highlighting
 
+### Chapter 5
+- [x] The layout tree
+- [x] Block Layout
+- [x] Size and position
+- [x] Recursive painting
+- [x] Backgrounds
+
+***Exercises:***
+- [ ] Links Bar
+- [ ] Hidden Head
+- [ ] Bullets
+- [ ] Scrollbar
+- [ ] Table of Contents
+- [ ] Anonymous Black Boxes
+- [ ] Run Ins
+
 # References
 
 Pavel, P., & Harrelson, C. (2023). *Web Browser Engineering* Browser.Engineering https://browser.engineering/index.html 
