@@ -40,7 +40,10 @@ export class DrawRect {
     execute(scroll:number, ctx: CanvasRenderingContext2D) {
         let w = this.right - this.left;
         let h = this.bottom - this.top;
+
+        let oldFill = ctx.fillStyle;
         ctx.fillStyle = this.color;
         ctx.fillRect(this.left, this.bottom - scroll, w, h);
+        ctx.fillStyle = oldFill;
     }
 }
