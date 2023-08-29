@@ -1,12 +1,13 @@
 import { Element, Node, Text, BLOCK_ELEMENTS } from "./elements";
 import { TextMetrics } from "@/fonts";
+import { DrawRect, DrawText } from "./painting/drawing";
 
 type Token = Element | Text;
 
 // x, word, fonts
 type LBDisplayType = [number, string, TextMetrics];
 // x, y, word, fonts
-type DisplayType = [number, number, string, TextMetrics]; 
+type DisplayType = DrawText | DrawRect;
 
 const FONTS: {[key:string]: TextMetrics} = {}
 
@@ -172,17 +173,24 @@ export class BlockLayout implements Layout {
             if (m.ascent > largestAscent) 
                 largestAscent = m.ascent;
         }
+
+
         // 2. set the line height
-        let baseline = this.cursor_y + 1.25 + largestAscent;
+        let baseline = this.cursor_y + 1.25 * largestAscent;
 
         // 3. append the word
         for (let word of this.line) {
+            let m = word[2].metrics();
             let x = this.x + word[0];
-            let y = this.y + baseline - word[2].metrics().ascent;
-            this.display_list.push([x, y, word[1], word[2]]);
+            let y = this.y + baseline + m.ascent;
+            this.display_list.push(new DrawText(x, y, word[1], word[2]));
         }
 
-        // 4. reset line and increment cursor by max descent
+        // 4. reset line
+        this.cursor_x = 0;
+        this.line = [];
+
+        // 5. increment cursor by max descent
         let largestDescent = 0;
         for (let word of this.line) {
             // 1. find line height
@@ -190,10 +198,8 @@ export class BlockLayout implements Layout {
             if (m.descent > largestDescent) 
                 largestDescent = m.descent;
         }
-        this.cursor_y += baseline + 1.25 + largestDescent;
 
-        this.cursor_x = 0;
-        this.line = [];
+        this.cursor_y = baseline + 1.25 * largestDescent;
     }
 
 
@@ -201,21 +207,23 @@ export class BlockLayout implements Layout {
         // 1. preformatted text
         if (this.node instanceof Element && this.node.tag == "pre") {
             let x2 = this.x + this.width;
-            let y2 = this.x + this.width;
+            let y2 = this.y + this.height;
             let rect = new DrawRect(this.x, this.y, x2, y2, "gray");
-            this.display_list.push(rect);
+            displayList.push(rect);
         }
 
         // 2. inline/text
         if (this.layoutMode() == "inline") {
             for (let dl of this.display_list) {
-                let x = dl[0];
-                let y = dl[0];
-                let word = dl[1];
-                let font = dl[2];
-                displayList.push(new DrawText(x, y, word, font));
+                let text = dl as DrawText;
+                let copy = new DrawText(text.left, text.top, text.text, text.font);
+                displayList.push(copy);
             }
         }
+
+        // 3. continue recursively
+        for (let ch of this.children)
+            ch.paint(displayList);
     }
 
     token(tok: Text | Element) {
@@ -373,6 +381,6 @@ export class DocumentLayout implements Layout {
     }
 
     paint(dl: DisplayType[]) {
-        this.children[0].paint(dl);
+        this.children[0].paint(this.display_list);
     }
 }

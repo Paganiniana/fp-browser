@@ -12,7 +12,6 @@ export class Browser {
     height: number;
 
     lastLayout: DocumentLayout | undefined;
-
     scroll:number = 0;
 
     constructor(target:HTMLElement) {
@@ -65,8 +64,8 @@ export class Browser {
 
     layout(tree:Node) {
         this.lastLayout = new DocumentLayout(tree, this.width, this.height);
-        console.log("Layout", this.lastLayout);
         this.lastLayout.layout();
+        this.lastLayout.paint(this.lastLayout.display_list);
     }
 
     draw() {
@@ -80,19 +79,13 @@ export class Browser {
 
         // draw everything in our layout
         this.ctx.fillStyle = "black";
-        for (let display of display_list) {
-            let x = display[0];
-            let y = display[1];
-            let c = display[2];
+        for (let cmd of display_list) {
             // 1. skip anything that's off-screen
-            if (y > this.scroll + this.height) continue;
-            if (y < this.scroll) continue;
+            if (cmd.top > this.scroll + this.height) continue;
+            if (cmd.bottom < this.scroll) continue;
             
-            // 2. account for font styles
-            this.setDrawFont(display[3]);
-
-            // 3. draw!
-            this.ctx.fillText(c, x, y - this.scroll);
+            // 2. draw
+            cmd.execute(this.scroll, this.ctx);
         }
     }
 
