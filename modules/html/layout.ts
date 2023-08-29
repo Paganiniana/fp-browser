@@ -56,18 +56,189 @@ export class BlockLayout implements Layout {
     weight="";
 
     constructor(node: Node, parent: Layout, previous: Layout | null) {
-        // set defaults
-        this.TM = this.getFont();
-        this.HSTEP = 13;
-        let metrics = this.TM.metrics();
-        this.VSTEP = metrics.linespace * 1.25;
-        this.cursor_x = this.HSTEP;
-        this.cursor_y = this.VSTEP;
-
         // assignments
         this.node = node;
         this.parent = parent;
         this.previous = previous;
+
+        // some defaults defaults
+        this.TM = this.getFont();
+        let metrics = this.TM.metrics();
+        
+        this.HSTEP = 13;
+        this.VSTEP = metrics.linespace * 1.25;
+
+        this.cursor_x = this.HSTEP;
+        this.cursor_y = this.VSTEP;
+    }
+
+    layout() {
+        // 0. compute position & height
+        this.x = this.parent.x;
+        this.width = this.parent.width;
+
+        if (this.previous)
+            this.y = this.previous.y + this.previous.height;
+        else 
+            this.y = this.parent.y;
+
+
+        // 1. determine layout mode
+        let mode = this.layoutMode();
+        
+        // clear the list
+        this.display_list = [];
+
+        // 2. do layout
+        if (mode == "block") {
+            let previous: Layout | null = null;
+            for (let child of this.node.getChildren()) {
+                let next:BlockLayout = new BlockLayout(child, this, previous);
+                this.children.push(next);
+                previous = next;
+            }
+        } else if (mode == "inline") {
+            // set defaults
+            this.cursor_x = 0;
+            this.cursor_y = 0;
+            this.setDefaults();
+
+            this.line = [];
+            this.recurse(this.node);
+            this.flush();
+        }
+
+        // 3. trigger layout in children
+        for (let ch of this.children) {
+            ch.layout();
+        }
+
+        // 4. compute height
+        if (mode == "block") {
+            this.height = 0;
+            for (let ch of this.children)
+                this.height+= ch.height;
+        } else if (mode == "inline") {
+            this.height = this.cursor_y;
+        }
+    }
+
+    layoutMode(): "inline" | "block" {
+        let nodeChildren = this.node.getChildren();
+        
+        // 1. this is a text node
+        if (this.node instanceof Text) {
+            return "inline";
+        }
+        // 2. NOT a text node, with children
+        else if (nodeChildren.length) {
+            let hasBlockElement = nodeChildren.some(ch => ch instanceof Element && BLOCK_ELEMENTS.includes(ch.tag));
+            // 2a. has block children
+            if (hasBlockElement) return "block";
+            // 2a. doesn't have block children
+            else return "inline";
+        }
+        // 3. NOT a text node, without children
+        else {
+            return "block";
+        }
+    }
+
+    word(word:string) {
+        let w = this.TM.measure(word);
+        // wrap
+        if (this.cursor_x + w > this.width) {
+            this.flush();
+        }
+
+        this.line.push([this.cursor_x, word, this.TM])
+
+        this.cursor_x += w + this.TM.measure(" ");
+    }
+
+    /**
+     * takes all of the words on a line, computes their Y pos
+     * and moves them to this.display_list
+     */
+    flush() {
+        if (!this.line.length) return;
+
+        // starting at 0 accounts for long <small> lines
+        // 1. find the tallest word
+        let largestAscent = 0;
+        for (let word of this.line) {
+            // 1. find line height
+            let m = word[2].metrics();
+            if (m.ascent > largestAscent) 
+                largestAscent = m.ascent;
+        }
+        // 2. set the line height
+        let baseline = this.cursor_y + 1.25 + largestAscent;
+
+        // 3. append the word
+        for (let word of this.line) {
+            let x = this.x + word[0];
+            let y = this.y + baseline - word[2].metrics().ascent;
+            this.display_list.push([x, y, word[1], word[2]]);
+        }
+
+        // 4. reset line and increment cursor by max descent
+        let largestDescent = 0;
+        for (let word of this.line) {
+            // 1. find line height
+            let m = word[2].metrics();
+            if (m.descent > largestDescent) 
+                largestDescent = m.descent;
+        }
+        this.cursor_y += baseline + 1.25 + largestDescent;
+
+        this.cursor_x = 0;
+        this.line = [];
+    }
+
+
+    paint(displayList:DisplayType[]) {
+        // 1. preformatted text
+        if (this.node instanceof Element && this.node.tag == "pre") {
+            let x2 = this.x + this.width;
+            let y2 = this.x + this.width;
+            let rect = new DrawRect(this.x, this.y, x2, y2, "gray");
+            this.display_list.push(rect);
+        }
+
+        // 2. inline/text
+        if (this.layoutMode() == "inline") {
+            for (let dl of this.display_list) {
+                let x = dl[0];
+                let y = dl[0];
+                let word = dl[1];
+                let font = dl[2];
+                displayList.push(new DrawText(x, y, word, font));
+            }
+        }
+    }
+
+    token(tok: Text | Element) {
+        if (tok instanceof Text) {
+            for (let word of tok.text.split(" ")) {
+                this.word(word);
+            }
+        }
+        else {
+            if (tok.tag == "i") this.style = "italic";
+            if (tok.tag == "/i") this.style = "";
+            if (tok.tag == "b") this.style = "bold";
+            if (tok.tag == "/b") this.style = "";
+            if (tok.tag == "small") this.size -= 2;
+            if (tok.tag == "/small") this.size += 2;
+            if (tok.tag == "big") this.size += 4;
+            if (tok.tag == "/big") this.size -= 4;
+            if (tok.tag == "br") this.flush();
+            if (tok.tag == "/p") {
+                this.flush();
+                this.cursor_y += this.VSTEP;
+            }
+        }
     }
 
     openTag(el: Element) {
@@ -117,130 +288,7 @@ export class BlockLayout implements Layout {
 
     }
 
-    word(word:string) {
-        let w = this.TM.measure(word);
-        // wrap
-        if (this.cursor_x + w > this.width) {
-            this.flush();
-        }
-
-        this.line.push([this.cursor_x, word, this.TM])
-
-        this.cursor_x += w + this.TM.measure(" ");
-    }
-
-    /**
-     * takes all of the words on a line, computes their Y pos
-     * and moves them to this.display_list
-     */
-    flush() {
-        // starting at 0 accounts for long <small> lines
-        // 1. find the tallest word
-        let largestAscent = 0;
-        for (let word of this.line) {
-            // 1. find line height
-            let m = word[2].metrics();
-            if (m.ascent > largestAscent) 
-                largestAscent = m.ascent;
-        }
-        // 2. set the line height
-        this.cursor_y += largestAscent * 1.25;
-        // 2.5. set the starting X
-        this.cursor_x = 0;
-
-        // 3. append the word
-        for (let word of this.line) {
-            let x = this.x + word[0];
-            let y = this.y - largestAscent; // + "baseline" ?
-            this.display_list.push([x, y, word[1], word[2]]);
-        }
-
-        this.line=[];
-    }
-
-
-    layoutMode(): "inline" | "block" {
-        let nodeChildren = this.node.getChildren();
-        
-        // 1. this is a text node
-        if (this.node instanceof Text) {
-            return "inline";
-        }
-        // 2. NOT a text node, with children
-        else if (nodeChildren.length) {
-            let hasBlockElement = nodeChildren.some(ch => ch instanceof Element && BLOCK_ELEMENTS.includes(ch.tag));
-            // 2a. has block children
-            if (hasBlockElement) return "block";
-            // 2a. doesn't have block children
-            else return "inline";
-        }
-        // 3. NOT a text node, without children
-        else {
-            return "block";
-        }
-    }
-
-    layout() {
-        // 0. compute position & height
-        this.x = this.parent.x;
-        if (this.previous)
-            this.y = this.previous.y + this.previous.height;
-        else 
-            this.y = this.parent.y;
-
-        this.width = this.parent.width;
-
-
-        // 1. determine layout mode
-        let mode = this.layoutMode();
-        // clear the list
-        this.display_list = [];
-
-        // 2. do layout
-        if (mode == "block") {
-            let previous: Layout | null = null;
-            for (let child of this.node.getChildren()) {
-                let next:BlockLayout = new BlockLayout(child, this, previous);
-                this.children.push(next);
-                previous = next;
-            }
-        } else if (mode == "inline") {
-            // set defaults
-            this.cursor_x = 0;
-            this.cursor_y = 0;
-            this.setDefaults();
-
-            this.line = [];
-            this.recurse(this.node);
-            this.flush();
-        }
-
-        // 3. trigger layout in children
-        for (let ch of this.children) {
-            ch.layout();
-        }
-
-        // 4. gather child layouts
-        for (let ch of this.children) {
-            this.display_list = [... this.display_list, ... ch.display_list];
-        }
-
-        if (this.display_list.length) {
-            console.log("We have a display list!", this);
-        }
-
-        // 5. compute height
-        if (mode == "block") {
-            this.height = 0;
-            for (let ch of this.children)
-                this.height+= ch.height;
-        } else if (mode == "inline") {
-            this.height = this.cursor_y;
-        }
-    }
-
     recurse(node:Node) {
-
         if (node instanceof Text) {
             let t = node;
             // 2. draw text nodes
@@ -259,14 +307,6 @@ export class BlockLayout implements Layout {
             this.closeTag(E as Element);
         }
     }
-
-
-    paint(dl:DisplayType[]) {
-        for (let ch of this.children) {
-            ch.paint(dl);
-        }
-    }
-
 
     defaultSize=16;
     defaultStyle="Times";
