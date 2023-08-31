@@ -204,6 +204,20 @@ export class BlockLayout implements Layout {
 
 
     paint(displayList:DisplayType[]) {
+        // 0. check for styles on node
+        if (this.node instanceof Element) {
+            // background
+            let bgColor = this.node.style["background-color"] ? this.node.style["background-color"] : "rgba(0,0,0,0)";
+            let x2 = this.x + this.width;
+            let y2 = this.y + this.height;
+            let R = new DrawRect(this.x, this.y, x2, y2, bgColor);
+            displayList.push(R);
+            
+            // color
+            let textColor = this.node.style["color"] ? this.node.style["color"] : "black";
+            this.TM.setFontColor(textColor);
+        }
+
         // 1. preformatted text
         if (this.node instanceof Element && this.node.tag == "pre") {
             let x2 = this.x + this.width;

@@ -1,6 +1,6 @@
 import { fakeFetch } from "./fetch";
 import { TextMetrics } from "./fonts";
-import { Node } from "./html/elements";
+import { Node, Element } from "./html/elements";
 import { parseHtml } from "./html";
 import { DocumentLayout } from "./html/layout";
 
@@ -62,6 +62,17 @@ export class Browser {
         e.stopPropagation();
     }
 
+    style(n:Node) {
+        n.traverseWith((n) => {
+            console.log("Traversing!")
+            if (n instanceof Element) { 
+                // @ts-ignore
+                n.parseStyle();
+            }
+        })
+        
+    }
+
     layout(tree:Node) {
         this.lastLayout = new DocumentLayout(tree, this.width, this.height);
         this.lastLayout.layout();
@@ -95,10 +106,15 @@ export class Browser {
             method: "GET",
         })
 
+        // 1. parse
         let parsedDom = parseHtml(res.body);
         let B = parsedDom.parse();
         console.log(B);
 
+        // 2. styles
+        this.style(parsedDom.root);
+
+        // 3. layout
         this.layout(parsedDom.root);
         this.draw();
     }

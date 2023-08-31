@@ -38,6 +38,10 @@ export default class TextMetrics {
         // set baseline? 
     }
 
+    setFontColor(color:string) {
+        this.ctx.strokeStyle = color;
+    }
+
     /**
      * Metrics for the whole font library
      */

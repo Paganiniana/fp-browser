@@ -18,6 +18,8 @@ export class DrawText {
 
     execute(scroll:number, ctx:CanvasRenderingContext2D) {
         ctx.font = this.font.ctx.font;
+        ctx.fillStyle = this.font.ctx.fillStyle;
+        ctx.strokeStyle = this.font.ctx.strokeStyle;
         ctx.fillText(this.text, this.left, this.top - scroll);
     }
 }

@@ -1,10 +1,12 @@
 import Node from "./Node";
 import { SELF_CLOSING_TAGS } from ".";
+import { CSSParser } from "@/css/CSSParser";
 
 
 export default class Element extends Node {
     tag!:string;
     attributes: { [key:string]: any} = {};
+    style: { [key:string]: string } = {};
 
     constructor(parent: Node | null, tagString:string) {
         super(parent);
@@ -22,12 +24,24 @@ export default class Element extends Node {
             if (attr.includes("=")) {
                 // it's a key/value pair
                 let splitIndex = attr.indexOf("=") // only get the *first* one!
-                let key = attr.slice(0, splitIndex);
-                let value = attr.slice(splitIndex + 1);
+                let key = attr.slice(0, splitIndex); 
+                // avoid double quotes surrounding the value
+                let value = attr.slice(splitIndex + 2, attr.length - 1); 
                 this.attributes[key.toLowerCase()] = value;
             } else {
                 // it's a boolean attribute
                 this.attributes[attr] = ""; // doesn't matter what value it is
+            }
+        }
+    }
+
+    parseStyle() {
+        if (Object.keys(this.attributes).includes("style")) {
+            let pairs = new CSSParser(this.attributes["style"]).body();
+            // console.log("Found styles on ", this);
+            // console.log("parsed", this.attributes["style"], pairs);
+            for (let key of Object.keys(pairs)) {
+                this.style[key] = pairs[key];
             }
         }
     }

@@ -13,4 +13,11 @@ export default class Node {
     getChildren():Node[] {
         return [... this.children];
     }
+
+    traverseWith(func: (n:Node) => void) {
+        func(this);
+        for (let ch of this.getChildren()) {
+            ch.traverseWith(func);
+        }
+    }
 }
